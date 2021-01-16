@@ -15,7 +15,7 @@ router.get('/',checkAuth, async (req,res)=> {
 });
 
 //Submit A POST 
-router.post('/',(req,res) => {
+router.post('/',checkAuth,(req,res) => {
     const post = new Post({
         title: req.body.title,
         description: req.body.description
@@ -31,7 +31,7 @@ router.post('/',(req,res) => {
 });
 
 //SPECIFIC POST 
-router.get('/:postId',async (req,res) => {
+router.get('/:postId',checkAuth,async (req,res) => {
     try {
         const post = await Post.findById(req.params.postId);
         res.json(post);
@@ -41,7 +41,7 @@ router.get('/:postId',async (req,res) => {
 })
 
 //Delete SPECIFIC POST
-router.delete('/:postId', async (req,res) => {
+router.delete('/:postId',checkAuth, async (req,res) => {
    try {
     const removedPost = await Post.remove({_id: req.params.postId})
     res.json(removedPost)
@@ -51,7 +51,7 @@ router.delete('/:postId', async (req,res) => {
 });
 
 //UPDATE A POST 
-router.patch('/:postId', async (req,res) => {
+router.patch('/:postId',checkAuth, async (req,res) => {
     try {
         const updatedPost = await Post.updateOne(
             {_id :req.params.postId},
