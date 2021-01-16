@@ -1,67 +1,22 @@
 const express= require('express');
 const router = express.Router();
-const Post = require('../models/Post');
-const jwt = require('jsonwebtoken');
 const checkAuth = require('../middleware/check-auth');
+const postController = require ('../controllers/posts')
 
 //GET BACK ALL THE POST 
-router.get('/',checkAuth, async (req,res)=> {
-    try {
-        const posts = await Post.find();
-        res.json(posts);
-    }catch {
-        res.json({message : err})
-    }
-});
+router.get('/',checkAuth,postController.posts_get_all);
 
 //Submit A POST 
-router.post('/',checkAuth,(req,res) => {
-    const post = new Post({
-        title: req.body.title,
-        description: req.body.description
-    });
-    
-    post.save()
-    .then(data =>{
-        res.json(data);
-    })
-    .catch(err =>{
-        res.json({message : err})
-    })
-});
+router.post('/',checkAuth,postController.post_create);
 
 //SPECIFIC POST 
-router.get('/:postId',checkAuth,async (req,res) => {
-    try {
-        const post = await Post.findById(req.params.postId);
-        res.json(post);
-    }catch (err) {
-        res.json({message : err })
-    }
-})
+router.get('/:postId',checkAuth,postController.post_get_one);
 
 //Delete SPECIFIC POST
-router.delete('/:postId',checkAuth, async (req,res) => {
-   try {
-    const removedPost = await Post.remove({_id: req.params.postId})
-    res.json(removedPost)
-}catch (err){
-       res.json({message : err})
-   }    
-});
+router.delete('/:postId',checkAuth,postController.post_delete_one);
 
 //UPDATE A POST 
-router.patch('/:postId',checkAuth, async (req,res) => {
-    try {
-        const updatedPost = await Post.updateOne(
-            {_id :req.params.postId},
-            {$set: {title: req.body.title}}
-            );
-        res.json(updatedPost);
-    }catch (err) {
-        res.json({message : null})
-    }
-})
+router.patch('/:postId',checkAuth,postController.post_patch);
 
 
 module.exports = router;
